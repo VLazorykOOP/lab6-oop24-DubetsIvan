@@ -1,146 +1,156 @@
-﻿#include "Lab6Example.h"
-#include <iostream>
-namespace SpaceExample1 {
-    ///Задача. Створити дві ієрархії класів без віртуального та з віртуальним спадкуванням, 
-    // з елементами даних класів у кожному класі. Схема успадкування на рисунку за варіантами. 
-    // Створити об’єкти похідних класів з віртуальним та без віртуального успадкуванням. 
-    // Вивести розміри об’єктів даних класів.
-    ///
-    class Base
-    {
-    protected:
-        int dat;
-        double a[5] = { 10,1,7,1,9 };
-    public:
-        Base() : dat(1) {}
-        Base(int d) : dat(d) {}
-    };
-  
-    class D1 : protected Base
-    {
-    protected:
-        int d1;
-    public:
-        D1() : d1(1) {}
-        D1(int d) : d1(d) {}
-        D1(int d, int dt) : Base(dt), d1(d) {}
-    };
+﻿#include <iostream>
 
-    class D2 : protected Base
-    {
-    protected:
-        double d2;
-    public:
-        D2() : d2(1) {}
-        D2(int d) : d2(d) {}
-        D2(int d, double dt) : Base(d), d2(dt) {}
-    };
+class Base {
+protected:
+    int dat;
 
-    class D12 : protected D1, protected D2
-    {
-    protected:
-        double dt;
-    public:
-        D12() : dt(1) {}
-        D12(int d) : dt(d) {}
-        D12(int a, int b, int c, double d, int e) : D1(a, b), D2(c, d), dt(e) {}
-    };
+public:
+    Base() : dat(1) {}
+    Base(int d) : dat(d) {}
+};
 
-    class R : protected D12, protected Base
-    {
-    protected:
-        double dt;
-    public:
-        R() : dt(1) {}
-        R(int d) : dt(d) {}
-        R(int a, int b, int c, double d, int e) : D12(a, b, c, d, e), Base::Base(a), dt(e + 1.) {}
-        void showDat()
-        {
-            std::cout << "dat =? Error C2385 ambiguous access level dat " << std::endl;
-            /// << dat << std::endl;
-          //  std::cout << "B12VV::D1V::Base::dat =  " << D12::D1::Base::dat << std::endl;
-           // std::cout << "B12VV::D1V::Base::dat =  " << Base::dat << std::endl;
-      //      std::cout << "B12VV::D1V::Base::dat =  " << D12::D2::Base::dat << std::endl;
-        }
-    };
-    
-    //
-    //  virtual
-    //
-    class D1V : virtual protected Base
-    {
-    protected:
-        int d1;
-    public:
-        D1V() : d1(1) {}
-        D1V(int d) : d1(d) {}
-        D1V(int d, int dt) : Base(dt), d1(d) {}
-    };
+class D1 : protected Base {
+protected:
+    int d1;
 
-    class D2V : virtual protected Base
-    {
-    protected:
-        double d2;
-    public:
-        D2V() : d2(1) {}
-        D2V(int d) : d2(d) {}
-        D2V(int d, double dt) : Base(d), d2(dt) {}
-    };
+public:
+    D1() : d1(1) {}
+    D1(int d) : d1(d) {}
+    D1(int d, int dt) : Base(dt), d1(d) {}
+};
 
-    class D12VV : virtual protected D1V, virtual public D2V
-    {
-    protected:
-        double dt;
-    public:
-        D12VV() : dt(1) {}
-        D12VV(int d) : dt(d) {}
-        D12VV(int a, int b, int c, double d, int e) : D1V(a, b), D2V(c, d), dt(e) {}
-    };
+class D2B : protected Base, protected D1 {
+protected:
+    int d2;
 
-    class RV3 : virtual protected D12VV, virtual public Base
-    {
-    protected:
-        double dt;
-    public:
-        RV3() : dt(1) {}
-        RV3(int d) : dt(d) {}
-        RV3(int a, int b, int c, double d, int e) : D12VV(a, b, c, d, e), Base::Base(a + 1),
-            dt(e + 1.0) {}
-        void showDat()
-        {
-            std::cout << "  dat =  " << dat << std::endl;
-            std::cout << "B12VV::D1V::Base::dat =  " << D12VV::D1V::Base::dat << std::endl;
-            std::cout << "B12VV::D1V::Base::dat =  " << Base::dat << std::endl;
-            std::cout << "B12VV::D1V::Base::dat =  " << D12VV::D2V::Base::dat << std::endl;
-        }
-    };
+public:
+    D2B() : d2(1) {}
+    D2B(int d) : d2(d) {}
+    D2B(int d, int dt, int d1, int d1t) : Base(dt), D1(d1, d1t), d2(d) {}
+};
 
-    int mainExample1()
-    {
-        std::cout << " Example1  \n";
-        R a, b(1, 2, 3, 4.5, 5);
-        RV3 av, bv(1, 2, 3, 4.5, 5);
 
-        std::cout << "Test !\n";
-        std::cout << "Size for Base " << sizeof(Base) << std::endl;
-        std::cout << "Size for D1 " << sizeof(D1) << std::endl;
-        std::cout << "Size for D2 " << sizeof(D2) << std::endl;
-        std::cout << "Size for D12 " << sizeof(D12) << std::endl;
-        std::cout << "Size for R " << sizeof(R) << std::endl;
+class D3_2B : protected D2B {
+protected:
+    int d1;
 
-        std::cout << "Size for Base " << sizeof(Base) << std::endl;
-        std::cout << "Size for D1V " << sizeof(D1V) << std::endl;
-        std::cout << "Size for D2V " << sizeof(D2V) << std::endl;
-        std::cout << "Size for D12VV " << sizeof(D12VV) << std::endl;
-        std::cout << "Size for RV3 " << sizeof(RV3) << std::endl;
+public:
+    D3_2B() : d1(1) {}
+    D3_2B(int d) : d1(d) {}
+    D3_2B(int d1, int d, int d2, int d3, int d4) : d1(d1), D2B(d, d2, d3, d4) {}
+};
 
-        std::cout << "Size for object class R " << sizeof(R) << " or  "
-            << sizeof(a) << " or  " << sizeof(b) << std::endl;
-        std::cout << "Size for object class RV3 " << sizeof(RV3) << " or  "
-            << sizeof(av) << " or  " << sizeof(bv) << std::endl;
-        b.showDat();
-        bv.showDat();
-        return 0;
-    }
+class D3_1 : protected D1 {
+protected:
+    int d1;
 
+public:
+    D3_1() : d1(1) {}
+    D3_1(int d) : d1(d) {}
+    D3_1(int d, int d1, int d2) : D1(d1, d2), d1(d) {}
+};
+
+class D4 : protected D1, protected D3_1 {
+protected:
+    int d1;
+
+public:
+    D4() : d1(1) {}
+    D4(int d) : d1(d) {}
+    D4(int d, int d1, int d2, int d3, int d4, int d5) : D1(d1, d2), d1(d), D3_1(d3, d4, d5) {}
+};
+
+
+class D5 : protected D4, protected D3_1 {
+protected:
+    int d1;
+
+public:
+    D5() : d1(1) {}
+    D5(int d) : d1(d) {}
+    D5(int d, int d1, int d2, int d3, int d4, int d5, int d6, int d7, int d8, int d9, int d10, int d11) : d1(d), D3_1(d3, d4, d5), D4(d6, d7, d8, d9, d10, d11) {}
+};
+
+
+
+
+class D1V : virtual protected Base {
+protected:
+    int d1;
+
+public:
+    D1V() : d1(1) {}
+    D1V(int d) : d1(d) {}
+    D1V(int d, int dt) : Base(dt), d1(d) {}
+};
+
+class D2BV : virtual protected Base, virtual protected D1V {
+protected:
+    int d2;
+
+public:
+    D2BV() : d2(1) {}
+    D2BV(int d) : d2(d) {}
+    D2BV(int d, int dt, int d1, int d1t) : Base(dt), D1V(d1, d1t), d2(d) {}
+};
+
+
+class D3_2BV : virtual protected D2BV {
+protected:
+    int d1;
+
+public:
+    D3_2BV() : d1(1) {}
+    D3_2BV(int d) : d1(d) {}
+    D3_2BV(int d1, int d, int d2, int d3, int d4) : d1(d1), D2BV(d, d2, d3, d4) {}
+};
+
+class D3_1V : virtual protected D1V {
+protected:
+    int d1;
+
+public:
+    D3_1V() : d1(1) {}
+    D3_1V(int d) : d1(d) {}
+    D3_1V(int d, int d1, int d2) : D1V(d1, d2), d1(d) {}
+};
+
+class D4V : virtual protected D1V, virtual protected D3_1V {
+protected:
+    int d1;
+
+public:
+    D4V() : d1(1) {}
+    D4V(int d) : d1(d) {}
+    D4V(int d, int d1, int d2, int d3, int d4, int d5) : D1V(d1, d2), d1(d), D3_1V(d3, d4, d5) {}
+};
+
+
+class D5V : virtual protected D4V, virtual protected D3_1V {
+protected:
+    int d1;
+
+public:
+    D5V() : d1(1) {}
+    D5V(int d) : d1(d) {}
+    D5V(int d, int d1, int d2, int d3, int d4, int d5, int d6, int d7, int d8, int d9, int d10, int d11) : d1(d), D3_1V(d3, d4, d5), D4V(d6, d7, d8, d9, d10, d11) {}
+};
+
+
+int main() {
+    std::cout << "Size of Base: " << sizeof(Base) << std::endl;
+    std::cout << "Size of D1: " << sizeof(D1) << std::endl;
+    std::cout << "Size of D2B: " << sizeof(D2B) << std::endl;
+    std::cout << "Size of D3_2B: " << sizeof(D3_2B) << std::endl;
+    std::cout << "Size of D3_1: " << sizeof(D3_1) << std::endl;
+    std::cout << "Size of D4: " << sizeof(D4) << std::endl;
+    std::cout << "Size of D5: " << sizeof(D5) << std::endl;
+    std::cout << "Size of D1V: " << sizeof(D1V) << std::endl;
+    std::cout << "Size of D2BV: " << sizeof(D2BV) << std::endl;
+    std::cout << "Size of D3_2BV: " << sizeof(D3_2BV) << std::endl;
+    std::cout << "Size of D3_1V: " << sizeof(D3_1V) << std::endl;
+    std::cout << "Size of D4V: " << sizeof(D4V) << std::endl;
+    std::cout << "Size of D5V: " << sizeof(D5V) << std::endl;
+
+    return 0;
 }
